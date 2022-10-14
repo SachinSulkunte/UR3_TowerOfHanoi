@@ -136,7 +136,7 @@ def move_arm(pub_cmd, loop_rate, dest, robot_states, params):
 
 def move_block(pub_cmd, loop_rate, start_loc, start_height, \
                end_loc, end_height, robot_states, params):
-    # Definition of our tower - 2D layers (top view)
+    # Definition of tower - 2D layers (top view)
 
     # Layer (Above blocks)
     # | Q[0][2][1] Q[1][2][1] Q[2][2][1] |   Above third block
@@ -154,23 +154,13 @@ def move_block(pub_cmd, loop_rate, start_loc, start_height, \
 
     Q = params.Q
 
-    # How the arm will move (Suggestions)
+    # How the arm will move
     # 1. Go to the "above (start) block" position from its base position
     # 2. Drop to the "contact (start) block" position
     # 3. Rise back to the "above (start) block" position
     # 4. Move to the destination "above (end) block" position
     # 5. Drop to the corresponding "contact (end) block" position
     # 6. Rise back to the "above (end) block" position
-
-    ##### Your Code Starts Here #####
-    
-    # TODO: Complete the steps to move one block from one 
-    #       location to another, using the Q matrix data
-    # Hint: 
-    # * use move_arm(), gripper() functions
-    # * use the 'robot_states.digital_in_0' value to check if a block is detected
-    # * use 'sys.exit()' to quit the program
-
 
     move_arm(pub_cmd, loop_rate, Q[start_loc][start_height][1], robot_states, params)
 
@@ -190,7 +180,6 @@ def move_block(pub_cmd, loop_rate, start_loc, start_height, \
     time.sleep(0.5)
 
     move_arm(pub_cmd, loop_rate, Q[1][0][1], robot_states, params)
-    ##### Your Code Ends Here #####
 
 
 def get_tower_index():
@@ -208,9 +197,6 @@ def get_tower_index():
     else:
         start_tower = 0
 
-    ##### Your Code Starts Here #####
-    # TODO: get input for destination_tower
-
     if(int(input_dest) == 1):
         destination_tower = 1
     elif (int(input_dest) == 2):
@@ -219,8 +205,6 @@ def get_tower_index():
         destination_tower = 3
     else:
         destination_tower = 0
-
-    ##### Your Code Ends Here #####
 
     return start_tower, destination_tower
         
@@ -259,11 +243,9 @@ def main():
     while(not input_done):
         start_tower, destination_tower = get_tower_index()
 
-        ##### Your Code Starts Here #####
-        # TODO: check if the indices are valid
+        # check if the indices are valid
         # - if either index is 0, quit the system
         # - if starting and destination are the same, ask to re-enter the numbers
-        # - if both are valid, jump out of this while loop to continue
 
         if start_tower == 0 or destination_tower == 0:
             sys.exit() # quit program
@@ -273,8 +255,6 @@ def main():
 
         else:
             break
-
-        ##### Your Code Ends Here #####
         
 
     # Check if ROS is ready for operation
@@ -291,12 +271,7 @@ def main():
         aux_tower = 1
     elif (start_tower == 1 and destination_tower == 2) or (start_tower == 2 and destination_tower == 1):
         aux_tower = 3
-
-    ############## Your Code Start Here ##############
-    
-    # TODO: using 'move_block' function defined above to guide UR3 
-    #       to move tower accordingly from user input
-
+       
     # Steps:
     # move smallest to final bottom
     # move middle to auxiliary tower bottom
@@ -317,9 +292,6 @@ def main():
     move_block(pub_command, loop_rate, aux_tower, 1, start_tower, 0, robot_states, params)
     move_block(pub_command, loop_rate, aux_tower, 0, destination_tower, 1, robot_states, params)
     move_block(pub_command, loop_rate, start_tower, 0, destination_tower, 2, robot_states, params)
-
-
-    ############### Your Code End Here ###############
 
 
 if __name__ == '__main__':
